@@ -1,0 +1,45 @@
+stages:
+  - build
+  - staging
+
+build_debug:
+  image: node:20-alpine
+  stage: build
+  tags: 
+    - jb_debug
+  before_script:
+    - declare -x NVM_BIN="/home/gitlab-runner/.nvm/versions/node/v20.12.1/bin"
+    - declare -x NVM_CD_FLAGS=""
+    - declare -x NVM_DIR="/home/gitlab-runner/.nvm"
+    - declare -x NVM_INC="/home/gitlab-runner/.nvm/versions/node/v20.12.1/include/node"
+    - declare -x OLDPWD="/home/gitlab-runner"
+    - declare -x PATH="/home/gitlab-runner/.nvm/versions/node/v20.12.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    - . ~/.bashrc
+  script:
+    - cp .env.develop .env
+    - npm install --progress=false
+    - npm run build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "push"'
+
+deploy_debug:
+  stage: staging
+  tags:
+    - jb_debug
+  script:
+    - rsync -zvrh ./etc/nginx/Dockerfile ./etc/nginx/nginx.conf /containers/src/jobberdo/jb_frontend/
+    - rsync -zvrh dist/ /containers/src/jobberdo/jb_frontend/data/
+    - ls -l
+    - cd /containers/src/jobberdo/jb_frontend/
+    - ls -alt    
+    - docker build -t jb_frontend .
+    - docker stop jb_frontend || true
+    - docker run -d -p 127.0.0.1:8066:80 --rm --name jb_frontend jb_frontend
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "push"'
