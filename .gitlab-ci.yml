@@ -7,6 +7,14 @@ build_debug:
   stage: build
   tags: 
     - jb_debug
+  before_script:
+    - declare -x NVM_BIN="/home/gitlab-runner/.nvm/versions/node/v20.12.1/bin"
+    - declare -x NVM_CD_FLAGS=""
+    - declare -x NVM_DIR="/home/gitlab-runner/.nvm"
+    - declare -x NVM_INC="/home/gitlab-runner/.nvm/versions/node/v20.12.1/include/node"
+    - declare -x OLDPWD="/home/gitlab-runner"
+    - declare -x PATH="/home/gitlab-runner/.nvm/versions/node/v20.12.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+    - . ~/.bashrc
   script:
     - cp .env.develop .env
     - npm install --progress=false
