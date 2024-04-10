@@ -5,7 +5,7 @@
 </template>
 <style scoped>
 main {
-  background: silver;
+  background: white;
   width: 100vw;
   height: 100vh;
 }

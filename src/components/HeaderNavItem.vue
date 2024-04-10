@@ -41,10 +41,13 @@ defineProps(['title', 'list'])
       background-repeat: no-repeat;
       background-image: url('/header/arrow.svg');
     }
+    &:hover {
+      background: #aadd91;
+    }
   }
   &.hover {
     .title {
-      background: #e5efff;
+      background: #aadd91;
       span {
         transform: rotate(180deg);
       }
@@ -54,7 +57,8 @@ defineProps(['title', 'list'])
 .navItem__list {
   position: absolute;
   width: 300px;
-  top: 50px;
+  top: 60px;
+  left: -17px;
   padding: 0px 4px 8px 4px;
   list-style: none;
   background: white;
@@ -70,7 +74,7 @@ defineProps(['title', 'list'])
     padding: 8px 16px;
 
     &:hover {
-      background: #e5efff;
+      background: #aadd91;
     }
   }
 }
