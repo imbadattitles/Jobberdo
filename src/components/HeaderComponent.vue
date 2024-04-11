@@ -27,12 +27,21 @@ const openBurger = ref(false)
     </nav> -->
     <div class="row">
       <div class="left">
-        <RouterLink to="/"
-          ><img src="/logo.png" class="logo" alt="Jobberdo" />
-          <img src="/logoMob.png" class="logoMob" alt="Jobberdo" />
+        <RouterLink to="/">
+          <div class="logoContain">
+            <img src="/logo.png" class="logo" alt="Jobberdo" />
+            <p>Jobberdo</p>
+          </div>
         </RouterLink>
-        <div v-if="!openBurger" @click="openBurger = true" class="burger"></div>
-        <div v-else @click="openBurger = false" class="closeBurger"></div>
+        <div class="rightMob">
+          <div class="rightMob__icons">
+            <div class="accauntIcons__notification"></div>
+            <div class="accauntIcons__projects"></div>
+          </div>
+          <div v-if="!openBurger" @click="openBurger = true" class="burger"></div>
+          <div v-else @click="openBurger = false" class="closeBurger"></div>
+        </div>
+
         <nav class="nav">
           <HeaderNavItem :title="menu[0]" />
           <HeaderNavItem :title="menu[1]" />
@@ -55,7 +64,7 @@ const openBurger = ref(false)
     </div>
     <div v-if="openBurger" class="menuMobile">
       <nav class="navMobile">
-        <RouterLink v-if="auth" to="/">
+        <RouterLink class="none600" v-if="auth" to="/">
           <div class="menuMobile__profile">
             <img src="/header/profileDefault.svg" class="accauntIcons__profile" alt="profile" />
             <p>My profile</p>
@@ -86,7 +95,7 @@ const openBurger = ref(false)
     flex-direction: column;
     width: 100%;
     position: absolute;
-    top: 78px;
+    top: 74px;
     left: 0;
     background: white;
     padding: 8px 20px 12px 8px;
@@ -95,9 +104,23 @@ const openBurger = ref(false)
     border-top: 2px solid #e0e0e0;
     @media (max-width: 600px) {
       gap: 24px;
+      top: 70px;
       .logBtns {
         display: flex;
       }
+    }
+  }
+}
+.rightMob {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  .rightMob__icons {
+    display: none;
+    @media (max-width: 600px) {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
   }
 }
@@ -126,6 +149,12 @@ const openBurger = ref(false)
       background-size: contain;
       background-repeat: no-repeat;
     }
+  }
+}
+.none600 {
+  display: none;
+  @media (max-width: 600px) {
+    display: block;
   }
 }
 .header {
@@ -186,13 +215,26 @@ const openBurger = ref(false)
     background: url('/header/closeBurger.svg');
   }
 }
-.logo {
-  width: 210px;
-  height: 50px;
-  @media (max-width: 1280px) {
-    display: none;
+.logoContain {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  .logo {
+    width: 45px;
+    max-height: 53px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  p {
+    font-size: 36px;
+    font-family: 'Alata';
+    color: #4e4e4e;
+    @media (max-width: 1280px) {
+      font-size: 24px;
+    }
   }
 }
+
 .logoMob {
   display: none;
   @media (max-width: 1280px) {
@@ -252,20 +294,20 @@ const openBurger = ref(false)
   div {
     cursor: pointer;
   }
-  .accauntIcons__notification {
-    width: 24px;
-    height: 24px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-image: url('/header/notification.svg');
-  }
-  .accauntIcons__projects {
-    width: 24px;
-    height: 24px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-image: url('/header/projects.svg');
-  }
+}
+.accauntIcons__notification {
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('/header/notification.svg');
+}
+.accauntIcons__projects {
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('/header/projects.svg');
 }
 .accauntIcons__profile {
   width: 48px;
