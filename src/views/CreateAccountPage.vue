@@ -1,0 +1,69 @@
+<script setup>
+import CreateAccount from '@/components/CreateAccount.vue'
+import CreateAccountChoose from '@/components/CreateAccountChoose.vue'
+import CreateAccountCode from '@/components/CreateAccountCode.vue'
+import { ref } from 'vue'
+const step = ref(1)
+const typeAccount = ref(null)
+const setTypeAccount = (type) => {
+  typeAccount.value = type
+}
+const changeStep = (newStep) => {
+  step.value = newStep
+}
+const registerData = ref({
+  email_verification_key: '',
+  password: '',
+  first_name: '',
+  last_name: '',
+  middle_name: ''
+})
+const setRegisterData = (data) => {
+  registerData.value = data
+  console.log(registerData.value)
+}
+const codeSendLeft = ref(3)
+const setSendLeft = (type) => {
+  if (type === 'decrement') {
+    codeSendLeft.value = codeSendLeft.value - 1
+  }
+  if (type === 'newCode') {
+    codeSendLeft.value = codeSendLeft.value = 3
+  }
+}
+</script>
+
+<template>
+  <main>
+    <CreateAccountChoose
+      :activeType="typeAccount"
+      @setType="setTypeAccount"
+      @stepAction="changeStep"
+      v-if="step === 1"
+    />
+    <CreateAccount
+      @setData="setRegisterData"
+      :registerData="registerData"
+      @stepAction="changeStep"
+      v-if="step === 2"
+    />
+    <CreateAccountCode
+      @setData="setRegisterData"
+      :registerData="registerData"
+      :codeSendLeft="codeSendLeft"
+      @setSendLeft="setSendLeft"
+      @stepAction="changeStep"
+      v-if="step === 3"
+    />
+  </main>
+</template>
+<style scoped>
+main {
+  background: white;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

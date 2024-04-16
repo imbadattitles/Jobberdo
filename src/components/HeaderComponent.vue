@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import HeaderNavItem from './HeaderNavItem.vue'
 import { ref } from 'vue'
 const auth = ref(false)
@@ -18,13 +18,10 @@ const menu = [
   }
 ]
 const openBurger = ref(false)
+const router = useRouter()
 </script>
 <template>
   <header class="header">
-    <!-- <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav> -->
     <div class="row">
       <div class="left">
         <RouterLink to="/">
@@ -34,7 +31,7 @@ const openBurger = ref(false)
           </div>
         </RouterLink>
         <div class="rightMob">
-          <div class="rightMob__icons">
+          <div v-if="auth" class="rightMob__icons">
             <div class="accauntIcons__notification"></div>
             <div class="accauntIcons__projects"></div>
           </div>
@@ -50,8 +47,8 @@ const openBurger = ref(false)
       </div>
       <div class="right">
         <div v-if="!auth" class="logBtns">
-          <button class="logBtns__login" @click="auth = !auth">Login</button>
-          <button class="logBtns__signUp" @click="auth = !auth">Sign Up</button>
+          <button @click="router.push('/login')" class="logBtns__login">Login</button>
+          <button @click="router.push('/signUp')" class="logBtns__signUp">Sign Up</button>
         </div>
         <div v-if="auth" class="accauntIcons">
           <div class="accauntIcons__notification"></div>
