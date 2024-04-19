@@ -1,6 +1,7 @@
 <script setup>
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import HeaderNavItem from './HeaderNavItem.vue'
+import PopUpRegLogin from './PopUpRegLogin.vue'
 import { ref } from 'vue'
 const auth = ref(false)
 const menu = [
@@ -18,7 +19,11 @@ const menu = [
   }
 ]
 const openBurger = ref(false)
-const router = useRouter()
+// const router = useRouter()
+const logOrRegModal = ref(false)
+const setModal = (modal) => {
+  logOrRegModal.value = modal
+}
 </script>
 <template>
   <header class="header">
@@ -47,8 +52,8 @@ const router = useRouter()
       </div>
       <div class="right">
         <div v-if="!auth" class="logBtns">
-          <button @click="router.push('/login')" class="logBtns__login">Login</button>
-          <button @click="router.push('/signUp')" class="logBtns__signUp">Sign Up</button>
+          <button @click="logOrRegModal = 'log'" class="logBtns__login">Login</button>
+          <button @click="logOrRegModal = 'reg'" class="logBtns__signUp">Sign Up</button>
         </div>
         <div v-if="auth" class="accauntIcons">
           <div class="accauntIcons__notification"></div>
@@ -75,11 +80,12 @@ const router = useRouter()
         <RouterLink to="/"><p>Contact</p></RouterLink>
       </nav>
       <div v-if="!auth" class="logBtns">
-        <button class="logBtns__login" @click="auth = !auth">Login</button>
-        <button class="logBtns__signUp" @click="auth = !auth">Sign Up</button>
+        <button class="logBtns__login" @click="logOrRegModal = 'log'">Login</button>
+        <button class="logBtns__signUp" @click="logOrRegModal = 'reg'">Sign Up</button>
       </div>
     </div>
   </header>
+  <PopUpRegLogin v-if="logOrRegModal" :openModal="logOrRegModal" @modalChange="setModal" />
 </template>
 <style scoped>
 .menuMobile {

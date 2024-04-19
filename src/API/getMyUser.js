@@ -4,7 +4,7 @@ export default async () => {
   const res = await fetch(config.backendUrl + `api/v1/security/users/me`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('session_uuid')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
       'Content-Type': 'application/json'
     }
   }).then((response) => {

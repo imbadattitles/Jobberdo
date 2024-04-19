@@ -1,29 +1,47 @@
 <script setup>
 import login from '@/API/login'
 import { useFetch } from '@/API/useFetch.vue'
+import { useForm } from 'vee-validate'
 import { ref } from 'vue'
+import * as yup from 'yup'
 
-const email = ref('')
-const password = ref('')
 const typePassword = ref('password')
 const [logCLick, isLoading, error] = useFetch(async () => {
   try {
     await login('web', email.value, password.value)
+    alert('готово к редиректу')
   } catch (error) {
-    throw new Error('error')
-  } finally {
-    email.value = ''
-    password.value = ''
+    throw new Error(error.message)
   }
+})
+
+const { errors, handleSubmit, defineField } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().email().required(),
+    password: yup.string().min(8).max(127).required()
+  })
+})
+
+const [email, emailAttrs] = defineField('email')
+const [password, passwordAttrs] = defineField('password')
+
+const onSubmit = handleSubmit(() => {
+  logCLick()
 })
 </script>
 <template>
   <div class="block">
-    <form :class="{ loading: isLoading }" class="form">
+    <form :class="{ loading: isLoading }" @submit="onSubmit" class="form">
       <p class="form__title">Log in</p>
       <label class="form__item">
         <p class="label">Email Address</p>
-        <input placeholder="Email Address" v-model="email" class="form__input" />
+        <input
+          v-model="email"
+          v-bind="emailAttrs"
+          placeholder="Email Address"
+          class="form__input"
+        />
+        <p v-if="errors.email" class="error"><span></span>{{ errors.email }}</p>
       </label>
 
       <div class="gap8">
@@ -34,7 +52,13 @@ const [logCLick, isLoading, error] = useFetch(async () => {
             :class="{ op50: typePassword === 'text' }"
           ></span>
           <p class="label">Password</p>
-          <input placeholder="Password" v-model="password" class="form__input" />
+          <input
+            v-model="password"
+            v-bind="passwordAttrs"
+            placeholder="Password"
+            class="form__input"
+          />
+          <p v-if="errors.password" class="error"><span></span>{{ errors.password }}</p>
         </label>
 
         <p class="form__text">or</p>
@@ -67,7 +91,7 @@ const [logCLick, isLoading, error] = useFetch(async () => {
 .passwordChange {
   cursor: pointer;
   position: absolute;
-  bottom: 16px;
+  top: 18px;
   right: 12px;
   width: 20px;
   height: 20px;
@@ -76,6 +100,26 @@ const [logCLick, isLoading, error] = useFetch(async () => {
   background-image: url('/login/eye.svg');
   &.op50 {
     opacity: 0.5;
+  }
+  @media (max-width: 600px) {
+    top: 9px;
+    width: 19px;
+  }
+}
+.error {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 14px;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #ff6464;
+  span {
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url('/login/error.svg');
   }
 }
 .form__item {
@@ -101,6 +145,9 @@ const [logCLick, isLoading, error] = useFetch(async () => {
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 48px;
   padding: 32px 72px 52px 72px;
+  @media (max-width: 600px) {
+    padding: 16px 32px 20px 32px;
+  }
 }
 .form {
   display: flex;
@@ -117,6 +164,9 @@ const [logCLick, isLoading, error] = useFetch(async () => {
   line-height: 120%;
   margin-bottom: 20px;
   color: #4e4e4e;
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 .form__input {
   width: 350px;
@@ -129,6 +179,12 @@ const [logCLick, isLoading, error] = useFetch(async () => {
   padding: 12px;
   &::placeholder {
     color: #4e4e4e;
+  }
+  @media (max-width: 600px) {
+    width: 260px;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #4e4e4e;
   }
 }
 .gap8 {
@@ -160,6 +216,15 @@ const [logCLick, isLoading, error] = useFetch(async () => {
     background-size: contain;
     background-image: url('/login/google.svg');
     background-repeat: no-repeat;
+    @media (max-width: 600px) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    padding: 6px;
+    border: 1px solid #4e4e4e;
   }
 }
 .goAndError {
@@ -203,6 +268,10 @@ const [logCLick, isLoading, error] = useFetch(async () => {
   }
   &:hover {
     box-shadow: 0px 4px 13.7px 0px rgba(0, 0, 0, 0.25) inset;
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    padding: 12px 40px;
   }
 }
 .gap16 {

@@ -173,6 +173,10 @@ const checkbox = ref(false)
   &:hover {
     opacity: 0.7;
   }
+  @media (max-width: 600px) {
+    top: 5px;
+    left: 50px;
+  }
 }
 .passwordChange {
   cursor: pointer;
@@ -186,6 +190,10 @@ const checkbox = ref(false)
   background-image: url('/login/eye.svg');
   &.op50 {
     opacity: 0.5;
+  }
+  @media (max-width: 600px) {
+    top: 9px;
+    width: 19px;
   }
 }
 .form__item {
@@ -211,6 +219,9 @@ const checkbox = ref(false)
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 48px;
   padding: 24px 72px 24px 72px;
+  @media (max-width: 600px) {
+    padding: 24px 32px 24px 32px;
+  }
 }
 .form {
   position: relative;
@@ -228,6 +239,9 @@ const checkbox = ref(false)
   line-height: 120%;
   margin-bottom: 20px;
   color: #4e4e4e;
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 .form__input {
   width: 350px;
@@ -240,6 +254,12 @@ const checkbox = ref(false)
   padding: 12px;
   &::placeholder {
     color: #4e4e4e;
+  }
+  @media (max-width: 600px) {
+    width: 260px;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #4e4e4e;
   }
 }
 .gap8 {
@@ -270,6 +290,15 @@ const checkbox = ref(false)
     background-size: contain;
     background-image: url('/login/google.svg');
     background-repeat: no-repeat;
+    @media (max-width: 600px) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    padding: 6px;
+    border: 1px solid #4e4e4e;
   }
 }
 .iagree {
@@ -289,6 +318,11 @@ const checkbox = ref(false)
     border-radius: 8px;
     transition: 0.2s;
     position: relative;
+    @media (max-width: 600px) {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #4e4e4e;
+    }
     &::after {
       content: '';
       display: block;
@@ -301,6 +335,11 @@ const checkbox = ref(false)
       position: absolute;
       left: 0px;
       top: 1px;
+      @media (max-width: 600px) {
+        width: 14px;
+        height: 16px;
+        border: 2px solid #4e4e4e;
+      }
     }
   }
   input:checked + .fake {
@@ -342,12 +381,19 @@ const checkbox = ref(false)
   &:hover {
     box-shadow: 0px 4px 13.7px 0px rgba(0, 0, 0, 0.25) inset;
   }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    padding: 12px 40px;
+  }
 }
 .gap16 {
   display: flex;
   align-items: center;
   flex-direction: column;
   gap: 16px;
+  @media (max-width: 600px) {
+    gap: 14px;
+  }
 }
 .form__text {
   font-size: 20px;
@@ -361,6 +407,9 @@ const checkbox = ref(false)
     &:hover {
       color: #457e43;
     }
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
   }
 }
 </style>

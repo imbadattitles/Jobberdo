@@ -1,6 +1,5 @@
+import PageHm from '@/views/PageHm.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '../views/LoginPage.vue'
-import CreateAccountPage from '../views/CreateAccountPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,17 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'src',
-      component: LoginPage
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: LoginPage
-    },
-    {
-      path: '/signUp',
-      name: 'signUp',
-      component: CreateAccountPage
+      component: PageHm
     }
   ]
 })

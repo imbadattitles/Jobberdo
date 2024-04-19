@@ -12,6 +12,7 @@ export default async (platform) => {
       }
     })
     if (res) {
+      localStorage.setItem('access_token', res.data.access_token)
       localStorage.setItem('session_uuid', res.data.session_uuid)
       localStorage.setItem('refresh_token', res.data.refresh_token)
     }

@@ -13,11 +13,13 @@ export default async (platform, email, password) => {
       'Content-Type': 'application/json'
     },
     body: body
-  }).then((response) => {
+  }).then(async (response) => {
     if (response.status === 200) {
       return response.json()
     } else {
-      throw new Error(response.status)
+      const json = await response.json()
+      console.log(json)
+      throw new Error(json.error.user_message)
     }
   })
   return res

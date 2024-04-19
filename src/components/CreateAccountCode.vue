@@ -15,8 +15,9 @@ const handleChange = (e, index) => {
     sendCode()
   }
 }
+
 const emit = defineEmits(['stepAction', 'setData', 'setSendLeft'])
-const props = defineProps(['registerData'])
+const props = defineProps(['registerData', 'sendLeft'])
 
 const [againCode, isLoadingAgain, error] = useFetch(async () => {
   try {
@@ -37,22 +38,43 @@ const [sendCode, isLoadingSendCode, sendCodeError] = useFetch(async () => {
       props.registerData.email_verification_key,
       code.value[0] + code.value[1] + code.value[2] + code.value[3] + code.value[4] + code.value[5]
     )
-
     emit('setData', {
       ...props.registerData,
       email_verification_key: res.data.key
     })
     if (res.data.verified) {
-      const res = await regFetch(
-        props.registerData.email_verification_key,
-        props.registerData.password,
-        props.registerData.first_name,
-        props.registerData.last_name
-      )
+      regAction()
     }
   } catch (error) {
+    code.value = [
+      ...code.value.map(() => {
+        return ''
+      })
+    ]
     emit('setSendLeft', 'decrement')
-    throw new Error('error')
+    console.log(error)
+    throw new Error(error.message)
+  }
+})
+
+const [regAction, regLoading, regError] = useFetch(async () => {
+  try {
+    const res = await regFetch(
+      props.registerData.email_verification_key,
+      props.registerData.password,
+      props.registerData.first_name,
+      props.registerData.last_name
+    )
+    alert('успех')
+    localStorage.setItem('session_uuid', res.data.session_uuid)
+    localStorage.setItem('refresh_token', res.data.refresh_token)
+  } catch (error) {
+    console.log(error)
+    if (error.message === 'User with this email already exists.') {
+      alert('перевод на логин')
+    } else {
+      alert(error.message)
+    }
   }
 })
 
@@ -66,7 +88,6 @@ const handleButtonClick = () => {
       <div @click.prevent="$emit('stepAction', 2)" class="back"></div>
       <div class="gap16">
         <p class="form__title">Create account</p>
-
         <p class="form__text">
           Almost everything, to complete registration, enter the code sent to your email
         </p>
@@ -78,24 +99,41 @@ const handleButtonClick = () => {
             v-for="(data, index) in code"
             maxlength="1"
             placeholder="0"
+            :disabled="sendCode <= 0"
             :value="data"
             @input="(e) => handleChange(e, index)"
             :key="index"
             type="text"
           />
         </div>
-        <p class="error"><span></span>{{ error }} asda</p>
+        <p v-if="sendCodeError" class="error">
+          <span></span>{{ sendCodeError }} {{ `attempts left: ${sendLeft}` }}
+        </p>
       </div>
-      <!-- <button class="formGreen">Sent code again</button> -->
       <div class="mgb">
         <TimeBtn @buttonClick="handleButtonClick" />
       </div>
-
       <p class="form__text"><span class="form__link">Didn’t get the letter?</span></p>
     </form>
   </div>
 </template>
 <style scoped>
+.error {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 14px;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #ff6464;
+  span {
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url('/login/error.svg');
+  }
+}
 .back {
   position: absolute;
   top: 13px;
@@ -109,6 +147,10 @@ const handleButtonClick = () => {
   &:hover {
     opacity: 0.7;
   }
+  @media (max-width: 600px) {
+    top: 0;
+    left: 10px;
+  }
 }
 .mgb {
   margin-bottom: 22px;
@@ -116,6 +158,9 @@ const handleButtonClick = () => {
 .codeArea {
   display: flex;
   gap: 8px;
+  @media (max-width: 600px) {
+    gap: 4px;
+  }
 
   &.codeError {
     &.codeArea__input {
@@ -134,6 +179,11 @@ const handleButtonClick = () => {
     &::placeholder {
       color: #e0e0e0;
     }
+    @media (max-width: 600px) {
+      font-size: 24px;
+      width: 38px;
+      padding: 4px 12px;
+    }
   }
 }
 .block {
@@ -142,6 +192,10 @@ const handleButtonClick = () => {
   border-radius: 48px;
   padding: 40px 44px 40px 44px;
   width: 495px;
+  @media (max-width: 600px) {
+    padding: 40px 28px;
+    width: 324px;
+  }
 }
 .form {
   position: relative;
@@ -155,6 +209,9 @@ const handleButtonClick = () => {
   font-family: Alata;
   line-height: 120%;
   color: #4e4e4e;
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 .gap16 {
   display: flex;
@@ -162,6 +219,10 @@ const handleButtonClick = () => {
   align-items: center;
   gap: 16px;
   margin-bottom: 22px;
+  @media (max-width: 600px) {
+    width: 250px;
+    margin-bottom: 26px;
+  }
 }
 .gap8 {
   display: flex;
@@ -169,6 +230,10 @@ const handleButtonClick = () => {
   align-items: flex-start;
   gap: 8px;
   margin-bottom: 22px;
+  @media (max-width: 600px) {
+    gap: 4px;
+    margin-bottom: 26px;
+  }
 }
 .error {
   display: flex;
@@ -198,6 +263,9 @@ const handleButtonClick = () => {
     &:hover {
       color: #457e43;
     }
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
   }
 }
 </style>

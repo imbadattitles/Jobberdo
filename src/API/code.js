@@ -5,19 +5,18 @@ export default async (key, code) => {
     key: key,
     code: code
   })
-  console.log(body)
   const res = await fetch(config.backendUrl + `api/v1/security/auth/verification/email/complete`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: body
-  }).then((response) => {
+  }).then(async (response) => {
     if (response.status === 200) {
       return response.json()
     } else {
-      console.log(response.json())
-      throw new Error(response.status)
+      const json = await response.json()
+      throw new Error(json.error.user_message)
     }
   })
   return res

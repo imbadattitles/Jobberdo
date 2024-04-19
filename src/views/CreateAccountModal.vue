@@ -34,36 +34,26 @@ const setSendLeft = (type) => {
 </script>
 
 <template>
-  <main>
-    <CreateAccountChoose
-      :activeType="typeAccount"
-      @setType="setTypeAccount"
-      @stepAction="changeStep"
-      v-if="step === 1"
-    />
-    <CreateAccount
-      @setData="setRegisterData"
-      :registerData="registerData"
-      @stepAction="changeStep"
-      v-if="step === 2"
-    />
-    <CreateAccountCode
-      @setData="setRegisterData"
-      :registerData="registerData"
-      :codeSendLeft="codeSendLeft"
-      @setSendLeft="setSendLeft"
-      @stepAction="changeStep"
-      v-if="step === 3"
-    />
-  </main>
+  <CreateAccountChoose
+    :activeType="typeAccount"
+    @setType="setTypeAccount"
+    @stepAction="changeStep"
+    v-if="step === 1"
+  />
+  <CreateAccount
+    @setData="setRegisterData"
+    :registerData="registerData"
+    @stepAction="changeStep"
+    v-if="step === 2"
+  />
+  <CreateAccountCode
+    @setData="setRegisterData"
+    :registerData="registerData"
+    :codeSendLeft="codeSendLeft"
+    @setSendLeft="setSendLeft"
+    :sendLeft="codeSendLeft"
+    @stepAction="changeStep"
+    v-if="step === 3"
+  />
 </template>
-<style scoped>
-main {
-  background: white;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>
+<style scoped></style>

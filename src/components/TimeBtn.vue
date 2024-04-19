@@ -2,7 +2,7 @@
   <button
     class="formGreen"
     :class="{ time: isButtonDisabled }"
-    @click="handleClick"
+    @click="handleClick('emit')"
     :disabled="isButtonDisabled"
   >
     {{ buttonText }}
@@ -34,6 +34,10 @@
   &:hover {
     box-shadow: 0px 4px 13.7px 0px rgba(0, 0, 0, 0.25) inset;
   }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    padding: 12px 40px;
+  }
 }
 .timer {
   display: flex;
@@ -53,14 +57,18 @@
 </style>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const isButtonDisabled = ref(false)
 const buttonText = ref('Send code again')
 const remainingTime = ref('')
 const emit = defineEmits(['buttonClick'])
 
-const handleClick = () => {
+onMounted(() => {
+  handleClick('noEmit')
+})
+
+const handleClick = (emitOrNot) => {
   isButtonDisabled.value = true
   buttonText.value = 'Send code again'
   let totalTime = 60
@@ -79,7 +87,9 @@ const handleClick = () => {
       remainingTime.value = ''
     }
   }, 1000)
-  emit('buttonClick')
+  if (emitOrNot === 'emit') {
+    emit('buttonClick')
+  }
 }
 
 const formatTime = (seconds) => {

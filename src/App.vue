@@ -4,8 +4,13 @@ import HeaderComponent from './components/HeaderComponent.vue'
 import FooterComponent from './components/FooterComponent.vue'
 import { onMounted } from 'vue'
 import presign from './API/presign'
+import refreshToken from './API/refreshToken'
 onMounted(() => {
-  presign('web')
+  if (localStorage.getItem('refresh_token')) {
+    refreshToken()
+  } else {
+    presign('web')
+  }
 })
 </script>
 
