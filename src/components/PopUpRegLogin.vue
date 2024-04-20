@@ -1,18 +1,17 @@
 <script setup>
 import CreateAccountModal from '@/views/CreateAccountModal.vue'
 import LoginComponent from './LoginComponent.vue'
-defineProps(['openModal'])
+defineProps(['openModal', 'googleQuery'])
 const emit = defineEmits(['modalChange'])
-const close = (e) => {
-  e.stopPropagation()
-  emit('modalChange', false)
+const close = (where) => {
+  emit('modalChange', where)
 }
 </script>
 <template>
-  <div @click="close" class="bg">
+  <div @click="close(false)" class="bg">
     <div @click.stop>
-      <CreateAccountModal v-if="openModal === 'reg'" />
-      <LoginComponent v-if="openModal === 'log'" />
+      <CreateAccountModal :changeModal="close" v-if="openModal === 'reg'" />
+      <LoginComponent :changeModal="close" v-if="openModal === 'log'" />
     </div>
   </div>
 </template>

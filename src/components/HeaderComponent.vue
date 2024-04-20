@@ -1,8 +1,8 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import HeaderNavItem from './HeaderNavItem.vue'
 import PopUpRegLogin from './PopUpRegLogin.vue'
-import { ref } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 const auth = ref(false)
 const menu = [
   {
@@ -19,11 +19,22 @@ const menu = [
   }
 ]
 const openBurger = ref(false)
-// const router = useRouter()
+const router = useRouter()
 const logOrRegModal = ref(false)
 const setModal = (modal) => {
   logOrRegModal.value = modal
 }
+console.log(router)
+const googleQuery = () => {
+  if (router.currentRoute.value.path === '/googleAuth') {
+    logOrRegModal.value = 'log'
+  }
+}
+onMounted(() => {
+  watchEffect(() => {
+    googleQuery()
+  })
+})
 </script>
 <template>
   <header class="header">

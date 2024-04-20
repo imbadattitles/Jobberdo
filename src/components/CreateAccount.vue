@@ -5,6 +5,7 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useFetch } from '@/API/useFetch.vue'
 import emailFetch from '@/API/email'
+import GoogleBtn from './GoogleBtn.vue'
 const typePassword = ref('password')
 const typeRepeatPassword = ref('password')
 
@@ -123,7 +124,7 @@ const checkbox = ref(false)
           <p v-if="errors.repeatPassword" class="error"><span></span>{{ errors.repeatPassword }}</p>
         </label>
         <p class="form__text">or</p>
-        <button class="googleBtn"><span />Continue with Google</button>
+        <GoogleBtn />
       </div>
       <label class="iagree">
         <input v-model="checkbox" type="checkbox" />

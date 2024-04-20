@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <main>1</main>
+  <main>2</main>
 </template>
 <style scoped>
 main {

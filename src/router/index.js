@@ -8,6 +8,11 @@ const router = createRouter({
       path: '/',
       name: 'src',
       component: PageHm
+    },
+    {
+      path: '/googleAuth',
+      name: 'google',
+      component: PageHm
     }
   ]
 })

@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
-defineProps(['activeType'])
+defineProps(['activeType', 'changeModal'])
 const emit = defineEmits(['stepAction', 'setType'])
 const clickItem = (type) => {
   emit('setType', type)
@@ -41,7 +41,9 @@ const clickItem = (type) => {
       >
         Next
       </button>
-      <p class="form__text">Already have an account? <span class="form__link">Log in</span></p>
+      <p class="form__text">
+        Already have an account? <span @click="changeModal('log')" class="form__link">Log in</span>
+      </p>
     </form>
   </div>
 </template>

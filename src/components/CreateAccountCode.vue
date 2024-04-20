@@ -19,7 +19,7 @@ const handleChange = (e, index) => {
 const emit = defineEmits(['stepAction', 'setData', 'setSendLeft'])
 const props = defineProps(['registerData', 'sendLeft'])
 
-const [againCode, isLoadingAgain, error] = useFetch(async () => {
+const [againCode] = useFetch(async () => {
   try {
     const res = await emailFetch(props.registerData.email)
     emit('setData', {
@@ -32,7 +32,7 @@ const [againCode, isLoadingAgain, error] = useFetch(async () => {
   }
 })
 
-const [sendCode, isLoadingSendCode, sendCodeError] = useFetch(async () => {
+const [sendCode, , sendCodeError] = useFetch(async () => {
   try {
     const res = await codeFetch(
       props.registerData.email_verification_key,
@@ -57,7 +57,7 @@ const [sendCode, isLoadingSendCode, sendCodeError] = useFetch(async () => {
   }
 })
 
-const [regAction, regLoading, regError] = useFetch(async () => {
+const [regAction] = useFetch(async () => {
   try {
     const res = await regFetch(
       props.registerData.email_verification_key,

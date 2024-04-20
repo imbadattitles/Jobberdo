@@ -1,14 +1,25 @@
 <script setup>
 import login from '@/API/login'
+import googleAuth from '@/API/googleAuth'
 import { useFetch } from '@/API/useFetch.vue'
 import { useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as yup from 'yup'
-
+import GoogleBtn from './GoogleBtn.vue'
+import { useRouter } from 'vue-router'
+defineProps(['changeModal'])
 const typePassword = ref('password')
 const [logCLick, isLoading, error] = useFetch(async () => {
   try {
     await login('web', email.value, password.value)
+    alert('готово к редиректу')
+  } catch (error) {
+    throw new Error(error.message)
+  }
+})
+const [googleFetch, isLoadingGoogle, errorGoogle] = useFetch(async () => {
+  try {
+    await googleAuth(router.currentRoute.value.query.code, router.currentRoute.value.query.error)
     alert('готово к редиректу')
   } catch (error) {
     throw new Error(error.message)
@@ -28,10 +39,19 @@ const [password, passwordAttrs] = defineField('password')
 const onSubmit = handleSubmit(() => {
   logCLick()
 })
+const router = useRouter()
+const googleQuery = () => {
+  if (router.currentRoute.value.path === '/googleAuth') {
+    googleFetch()
+  }
+}
+onMounted(() => {
+  googleQuery()
+})
 </script>
 <template>
   <div class="block">
-    <form :class="{ loading: isLoading }" @submit="onSubmit" class="form">
+    <form :class="{ loading: isLoading | isLoadingGoogle }" @submit="onSubmit" class="form">
       <p class="form__title">Log in</p>
       <label class="form__item">
         <p class="label">Email Address</p>
@@ -62,7 +82,7 @@ const onSubmit = handleSubmit(() => {
         </label>
 
         <p class="form__text">or</p>
-        <button class="googleBtn"><span />Continue with Google</button>
+        <GoogleBtn />
       </div>
       <div class="goAndError">
         <button
@@ -78,11 +98,14 @@ const onSubmit = handleSubmit(() => {
           Log in
         </button>
         <p v-if="error" class="error"><span></span>{{ error }}</p>
+        <p v-if="errorGoogle" class="error"><span></span>{{ errorGoogle }}</p>
       </div>
 
       <div class="gap16">
         <p class="form__text"><span class="form__link">Forgot your password?</span></p>
-        <p class="form__text">No account? <span class="form__link">Create account</span></p>
+        <p class="form__text">
+          No account? <span @click="changeModal('reg')" class="form__link">Create account</span>
+        </p>
       </div>
     </form>
   </div>
@@ -195,38 +218,7 @@ const onSubmit = handleSubmit(() => {
   gap: 8px;
   margin-bottom: 20px;
 }
-.googleBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  cursor: pointer;
-  gap: 8px;
-  padding: 9px;
-  width: 100%;
-  font-size: 20px;
-  font-family: Segoe UI;
-  border-radius: 8px;
-  color: #4e4e4e;
-  font-weight: 600;
-  border: 2px solid #4e4e4e;
-  span {
-    width: 32px;
-    height: 32px;
-    background-size: contain;
-    background-image: url('/login/google.svg');
-    background-repeat: no-repeat;
-    @media (max-width: 600px) {
-      width: 24px;
-      height: 24px;
-    }
-  }
-  @media (max-width: 600px) {
-    font-size: 16px;
-    padding: 6px;
-    border: 1px solid #4e4e4e;
-  }
-}
+
 .goAndError {
   display: flex;
   flex-direction: column;

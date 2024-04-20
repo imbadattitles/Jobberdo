@@ -3,6 +3,7 @@ import CreateAccount from '@/components/CreateAccount.vue'
 import CreateAccountChoose from '@/components/CreateAccountChoose.vue'
 import CreateAccountCode from '@/components/CreateAccountCode.vue'
 import { ref } from 'vue'
+defineProps(['changeModal'])
 const step = ref(1)
 const typeAccount = ref(null)
 const setTypeAccount = (type) => {
@@ -35,6 +36,7 @@ const setSendLeft = (type) => {
 
 <template>
   <CreateAccountChoose
+    :changeModal="changeModal"
     :activeType="typeAccount"
     @setType="setTypeAccount"
     @stepAction="changeStep"
