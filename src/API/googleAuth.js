@@ -1,9 +1,10 @@
 import config from '../../config'
 
 export default async (code, error) => {
+  const errorCode = error ? `&error=${error}` : ''
   const res = await fetch(
     config.backendUrl +
-      `api/v1/security/auth/login/google/complete?platform=web&error=${error}&code=${code}`,
+      `api/v1/security/auth/login/google/complete?platform=web${errorCode}&code=${code}`,
     {
       method: 'POST',
       headers: {

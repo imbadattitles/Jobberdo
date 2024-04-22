@@ -83,7 +83,7 @@ const handleClick = (emitOrNot) => {
     if (timeLeft <= 0) {
       clearInterval(timer)
       isButtonDisabled.value = false
-      buttonText.value = 'Нажми на кнопку'
+      buttonText.value = 'Send code again'
       remainingTime.value = ''
     }
   }, 1000)

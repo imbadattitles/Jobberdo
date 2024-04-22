@@ -26,10 +26,18 @@ const [googleFetch, isLoadingGoogle, errorGoogle] = useFetch(async () => {
   }
 })
 
-const { errors, handleSubmit, defineField } = useForm({
+const { errors, handleSubmit, meta, defineField } = useForm({
   validationSchema: yup.object({
-    email: yup.string().email().required(),
-    password: yup.string().min(8).max(127).required()
+    email: yup
+      .string()
+      .email()
+      .max(127, 'Max 127 characters')
+      .required('Please enter your email address.'),
+    password: yup
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(127, 'Max 127 characters')
+      .required('Please enter your password.')
   })
 })
 
@@ -54,13 +62,10 @@ onMounted(() => {
     <form :class="{ loading: isLoading | isLoadingGoogle }" @submit="onSubmit" class="form">
       <p class="form__title">Log in</p>
       <label class="form__item">
-        <p class="label">Email Address</p>
-        <input
-          v-model="email"
-          v-bind="emailAttrs"
-          placeholder="Email Address"
-          class="form__input"
-        />
+        <input maxlength="127" v-model="email" v-bind="emailAttrs" class="form__input" />
+        <p v-if="!email" class="placeholder">user00@gmail.com</p>
+        <p :class="{ activeLabel: email }" class="label">Email Address</p>
+
         <p v-if="errors.email" class="error"><span></span>{{ errors.email }}</p>
       </label>
 
@@ -71,13 +76,16 @@ onMounted(() => {
             @click="typePassword === 'text' ? (typePassword = 'password') : (typePassword = 'text')"
             :class="{ op50: typePassword === 'text' }"
           ></span>
-          <p class="label">Password</p>
+
           <input
+            maxlength="127"
             v-model="password"
+            :type="typePassword"
             v-bind="passwordAttrs"
-            placeholder="Password"
             class="form__input"
           />
+          <p :class="{ activeLabel: password }" class="label">Password</p>
+          <p v-if="!password" class="placeholder">********</p>
           <p v-if="errors.password" class="error"><span></span>{{ errors.password }}</p>
         </label>
 
@@ -86,7 +94,8 @@ onMounted(() => {
       </div>
       <div class="goAndError">
         <button
-          :disabled="isLoading"
+          :disabled="!meta.valid || isLoading"
+          :class="{ blockBtn: !meta.valid }"
           @click="
             (e) => {
               e.preventDefault()
@@ -150,7 +159,81 @@ onMounted(() => {
   flex-direction: column;
   gap: 4px;
   position: relative;
+  .placeholder {
+    position: absolute;
+    top: 13px;
+    left: 16px;
+    font-size: 20px;
+    font-family: Segoe UI;
+    pointer-events: none;
+    color: #4e4e4e;
+    font-weight: 600;
+    opacity: 0;
+    transition: 0.2s;
+    &.activePlaceholder {
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      top: 10px;
+      font-size: 14px;
+    }
+  }
   .label {
+    pointer-events: none;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    font-size: 20px;
+    font-family: Segoe UI;
+    font-weight: 600;
+    line-height: 120%;
+    padding: 0px 4px;
+    background: white;
+    color: #4e4e4e;
+    transition: 0.2s;
+    @media (max-width: 600px) {
+      font-size: 14px;
+      top: 12px;
+    }
+  }
+  .form__input {
+    width: 350px;
+    font-size: 20px;
+    font-family: Segoe UI;
+    border-radius: 8px;
+    color: #4e4e4e;
+    font-weight: 600;
+    border: 2px solid #4e4e4e;
+    padding: 12px;
+    &::placeholder {
+      color: #4e4e4e;
+    }
+    @media (max-width: 600px) {
+      width: 260px;
+      font-size: 14px;
+      padding: 8px 12px;
+      border: 1px solid #4e4e4e;
+    }
+    &:focus,
+    &:active {
+      ~ .label {
+        position: absolute;
+        top: -8px;
+        left: 14px;
+        font-size: 12px;
+        font-family: Segoe UI;
+        font-weight: 600;
+        line-height: 120%;
+        padding: 0px 4px;
+        background: white;
+        color: #4e4e4e;
+      }
+      ~ .placeholder {
+        opacity: 1;
+      }
+    }
+  }
+  .activeLabel {
     position: absolute;
     top: -8px;
     left: 14px;
@@ -170,6 +253,7 @@ onMounted(() => {
   padding: 32px 72px 52px 72px;
   @media (max-width: 600px) {
     padding: 16px 32px 20px 32px;
+    width: 324px;
   }
 }
 .form {
@@ -191,25 +275,7 @@ onMounted(() => {
     font-size: 24px;
   }
 }
-.form__input {
-  width: 350px;
-  font-size: 20px;
-  font-family: Segoe UI;
-  border-radius: 8px;
-  color: #4e4e4e;
-  font-weight: 600;
-  border: 2px solid #4e4e4e;
-  padding: 12px;
-  &::placeholder {
-    color: #4e4e4e;
-  }
-  @media (max-width: 600px) {
-    width: 260px;
-    font-size: 14px;
-    padding: 8px 12px;
-    border: 1px solid #4e4e4e;
-  }
-}
+
 .gap8 {
   margin-top: 16px;
   display: flex;
@@ -255,7 +321,7 @@ onMounted(() => {
   cursor: pointer;
   transition: 0.2s;
   line-height: 120%;
-  &.block {
+  &.blockBtn {
     opacity: 0.5;
   }
   &:hover {

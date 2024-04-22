@@ -36,7 +36,7 @@ const clickItem = (type) => {
       <button
         :disabled="!activeType"
         @click.prevent="$emit('stepAction', 2)"
-        :class="{ block: !activeType }"
+        :class="{ blockBtn: !activeType }"
         class="formGreen"
       >
         Next
@@ -97,7 +97,7 @@ const clickItem = (type) => {
   transition: 0.2s;
   margin-bottom: 22px;
   line-height: 120%;
-  &.block {
+  &.blockBtn {
     opacity: 0.5;
   }
   &:hover {

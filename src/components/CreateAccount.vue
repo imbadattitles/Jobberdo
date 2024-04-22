@@ -9,16 +9,27 @@ import GoogleBtn from './GoogleBtn.vue'
 const typePassword = ref('password')
 const typeRepeatPassword = ref('password')
 
-const { errors, handleSubmit, defineField } = useForm({
+const { errors, handleSubmit, defineField, meta } = useForm({
   validationSchema: yup.object({
-    email: yup.string().email().required(),
-    firstName: yup.string().max(127).required(),
-    lastName: yup.string().max(127).required(),
-    password: yup.string().min(8).max(127).required(),
+    email: yup
+      .string()
+      .email()
+      .max(127, 'Max 127 characters')
+      .required('Please enter your email address.'),
+    firstName: yup
+      .string()
+      .max(127, 'Max 127 characters')
+      .required('Please enter your first name.'),
+    lastName: yup.string().max(127, 'Max 127 characters').required('Please enter your last name.'),
+    password: yup
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(127, 'Max 127 characters')
+      .required('Please enter your password.'),
     repeatPassword: yup
       .string()
-      .oneOf([yup.ref('password')], 'Passwords do not match')
-      .required()
+      .oneOf([yup.ref('password')], 'Passwords do not match.')
+      .required('Please repeat password.')
   })
 })
 const emit = defineEmits(['stepAction', 'setData'])
@@ -49,62 +60,50 @@ const [repeatPassword, repeatPasswordAttrs] = defineField('repeatPassword')
 const [firstName, firstNameAttrs] = defineField('firstName')
 const [lastName, lastNameAttrs] = defineField('lastName')
 const checkbox = ref(false)
+defineProps(['changeModal', 'displayNone'])
 </script>
 <template>
-  <div class="block">
+  <div :class="{ displayNone: displayNone }" class="block">
     <form :class="{ loading: isLoading }" @submit="onSubmit" class="form">
       <div @click.prevent="$emit('stepAction', 1)" class="back"></div>
       <p class="form__title">Create account</p>
       <div class="gap16">
         <label class="form__item">
-          <p class="label">Email Address</p>
-          <input
-            type="email"
-            v-model="email"
-            v-bind="emailAttrs"
-            placeholder="user00@gmail.com"
-            class="form__input"
-          />
+          <input type="email" v-model="email" v-bind="emailAttrs" class="form__input" />
+          <p :class="{ activeLabel: email }" class="label">Email Address</p>
+          <p v-if="!email" class="placeholder">user00@gmail.com</p>
           <p v-if="errors.email" class="error"><span></span>{{ errors.email }}</p>
         </label>
         <label class="form__item">
-          <p class="label">First name</p>
-          <input
-            v-model="firstName"
-            v-bind="firstNameAttrs"
-            placeholder="user00@gmail.com"
-            class="form__input"
-          />
+          <input maxlength="127" v-model="firstName" v-bind="firstNameAttrs" class="form__input" />
+          <p :class="{ activeLabel: firstName }" class="label">First Name</p>
+          <p v-if="!firstName" class="placeholder">John</p>
+          <p v-if="errors.firstName" class="error"><span></span>{{ errors.firstName }}</p>
+        </label>
+        <label class="form__item">
+          <input maxlength="127" v-model="lastName" v-bind="lastNameAttrs" class="form__input" />
+          <p :class="{ activeLabel: lastName }" class="label">Last Name</p>
+          <p v-if="!lastName" class="placeholder">Smith</p>
           <p v-if="errors.lastName" class="error"><span></span>{{ errors.lastName }}</p>
         </label>
         <label class="form__item">
-          <p class="label">Last name</p>
-          <input
-            v-model="lastName"
-            v-bind="lastNameAttrs"
-            placeholder="user00@gmail.com"
-            class="form__input"
-          />
-          <p v-if="errors.lastName" class="error"><span></span>{{ errors.lastName }}</p>
-        </label>
-        <label class="form__item">
-          <p class="label">Password</p>
           <span
             class="passwordChange"
             @click="typePassword === 'text' ? (typePassword = 'password') : (typePassword = 'text')"
             :class="{ op50: typePassword === 'text' }"
           ></span>
           <input
+            maxlength="127"
             v-model="password"
             v-bind="passwordAttrs"
-            placeholder="user00@gmail.com"
             :type="typePassword"
             class="form__input"
           />
+          <p :class="{ activeLabel: password }" class="label">Password</p>
+          <p v-if="!password" class="placeholder">********</p>
           <p v-if="errors.password" class="error"><span></span>{{ errors.password }}</p>
         </label>
         <label class="form__item">
-          <p class="label">Repeat password</p>
           <span
             class="passwordChange"
             @click="
@@ -115,12 +114,14 @@ const checkbox = ref(false)
             :class="{ op50: typeRepeatPassword === 'text' }"
           ></span>
           <input
+            maxlength="127"
             v-model="repeatPassword"
             v-bind="repeatPasswordAttrs"
-            placeholder="user00@gmail.com"
             :type="typeRepeatPassword"
             class="form__input"
           />
+          <p :class="{ activeLabel: repeatPassword }" class="label">Repeat Password</p>
+          <p v-if="!repeatPassword" class="placeholder">********</p>
           <p v-if="errors.repeatPassword" class="error"><span></span>{{ errors.repeatPassword }}</p>
         </label>
         <p class="form__text">or</p>
@@ -135,11 +136,17 @@ const checkbox = ref(false)
         </p>
       </label>
       <div class="goAndError">
-        <button :disabled="!checkbox" :class="{ block: !checkbox }" class="formGreen">Next</button>
+        <button
+          :disabled="!checkbox || !meta.valid"
+          :class="{ blockBtn: !meta.valid || !checkbox }"
+          class="formGreen"
+        >
+          Next
+        </button>
         <p v-if="error" class="error"><span></span>{{ error }}</p>
       </div>
       <p class="form__text">
-        Already have an account?<span class="form__link"> Forgot your password?</span>
+        Already have an account?<span @click="changeModal('log')" class="form__link"> Log in</span>
       </p>
     </form>
   </div>
@@ -164,7 +171,7 @@ const checkbox = ref(false)
 .back {
   position: absolute;
   top: 13px;
-  left: 47px;
+  left: 0px;
   width: 24px;
   height: 24px;
   cursor: pointer;
@@ -175,8 +182,8 @@ const checkbox = ref(false)
     opacity: 0.7;
   }
   @media (max-width: 600px) {
-    top: 5px;
-    left: 50px;
+    top: 0;
+    left: 10px;
   }
 }
 .passwordChange {
@@ -202,7 +209,81 @@ const checkbox = ref(false)
   flex-direction: column;
   gap: 4px;
   position: relative;
+  .placeholder {
+    position: absolute;
+    top: 13px;
+    left: 16px;
+    font-size: 20px;
+    font-family: Segoe UI;
+    pointer-events: none;
+    color: #4e4e4e;
+    font-weight: 600;
+    opacity: 0;
+    transition: 0.2s;
+    &.activePlaceholder {
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      top: 10px;
+      font-size: 14px;
+    }
+  }
   .label {
+    pointer-events: none;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    font-size: 20px;
+    font-family: Segoe UI;
+    font-weight: 600;
+    line-height: 120%;
+    padding: 0px 4px;
+    background: white;
+    color: #4e4e4e;
+    transition: 0.2s;
+    @media (max-width: 600px) {
+      font-size: 14px;
+      top: 12px;
+    }
+  }
+  .form__input {
+    width: 350px;
+    font-size: 20px;
+    font-family: Segoe UI;
+    border-radius: 8px;
+    color: #4e4e4e;
+    font-weight: 600;
+    border: 2px solid #4e4e4e;
+    padding: 12px;
+    &::placeholder {
+      color: #4e4e4e;
+    }
+    @media (max-width: 600px) {
+      width: 260px;
+      font-size: 14px;
+      padding: 8px 12px;
+      border: 1px solid #4e4e4e;
+    }
+    &:focus,
+    &:active {
+      ~ .label {
+        position: absolute;
+        top: -8px;
+        left: 14px;
+        font-size: 12px;
+        font-family: Segoe UI;
+        font-weight: 600;
+        line-height: 120%;
+        padding: 0px 4px;
+        background: white;
+        color: #4e4e4e;
+      }
+      ~ .placeholder {
+        opacity: 1;
+      }
+    }
+  }
+  .activeLabel {
     position: absolute;
     top: -8px;
     left: 14px;
@@ -222,6 +303,10 @@ const checkbox = ref(false)
   padding: 24px 72px 24px 72px;
   @media (max-width: 600px) {
     padding: 24px 32px 24px 32px;
+    width: 324px;
+  }
+  &.displayNone {
+    display: none;
   }
 }
 .form {
@@ -244,25 +329,7 @@ const checkbox = ref(false)
     font-size: 24px;
   }
 }
-.form__input {
-  width: 350px;
-  font-size: 20px;
-  font-family: Segoe UI;
-  border-radius: 8px;
-  color: #4e4e4e;
-  font-weight: 400;
-  border: 2px solid #4e4e4e;
-  padding: 12px;
-  &::placeholder {
-    color: #4e4e4e;
-  }
-  @media (max-width: 600px) {
-    width: 260px;
-    font-size: 14px;
-    padding: 8px 12px;
-    border: 1px solid #4e4e4e;
-  }
-}
+
 .gap8 {
   display: flex;
   flex-direction: column;
@@ -307,6 +374,10 @@ const checkbox = ref(false)
   align-items: center;
   gap: 8px;
   margin: 20px auto 20px 20px;
+  @media (max-width: 600px) {
+    margin: 16px auto 16px auto;
+    width: 250px;
+  }
   input {
     display: none;
   }
@@ -320,7 +391,7 @@ const checkbox = ref(false)
     transition: 0.2s;
     position: relative;
     @media (max-width: 600px) {
-      width: 20px;
+      min-width: 20px;
       height: 20px;
       border: 2px solid #4e4e4e;
     }
@@ -376,7 +447,7 @@ const checkbox = ref(false)
   cursor: pointer;
   transition: 0.2s;
   line-height: 120%;
-  &.block {
+  &.blockBtn {
     opacity: 0.5;
   }
   &:hover {

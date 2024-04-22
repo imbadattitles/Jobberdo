@@ -4,7 +4,7 @@ import CreateAccountChoose from '@/components/CreateAccountChoose.vue'
 import CreateAccountCode from '@/components/CreateAccountCode.vue'
 import { ref } from 'vue'
 defineProps(['changeModal'])
-const step = ref(1)
+const step = ref(3)
 const typeAccount = ref(null)
 const setTypeAccount = (type) => {
   typeAccount.value = type
@@ -45,8 +45,9 @@ const setSendLeft = (type) => {
   <CreateAccount
     @setData="setRegisterData"
     :registerData="registerData"
+    :changeModal="changeModal"
     @stepAction="changeStep"
-    v-if="step === 2"
+    :displayNone="!(step === 2)"
   />
   <CreateAccountCode
     @setData="setRegisterData"

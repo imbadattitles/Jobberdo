@@ -63,8 +63,8 @@ onMounted(() => {
       </div>
       <div class="right">
         <div v-if="!auth" class="logBtns">
-          <button @click="logOrRegModal = 'log'" class="logBtns__login">Login</button>
-          <button @click="logOrRegModal = 'reg'" class="logBtns__signUp">Sign Up</button>
+          <button @click="logOrRegModal = 'log'" class="logBtns__login">Log in</button>
+          <button @click="logOrRegModal = 'reg'" class="logBtns__signUp">Sign up</button>
         </div>
         <div v-if="auth" class="accauntIcons">
           <div class="accauntIcons__notification"></div>
@@ -83,7 +83,6 @@ onMounted(() => {
             <p>My profile</p>
           </div></RouterLink
         >
-
         <RouterLink to="/"><p>Freelancers</p></RouterLink>
         <RouterLink to="/"><p>Work</p></RouterLink>
         <RouterLink to="/"><p>About Us</p></RouterLink>
@@ -91,8 +90,8 @@ onMounted(() => {
         <RouterLink to="/"><p>Contact</p></RouterLink>
       </nav>
       <div v-if="!auth" class="logBtns">
-        <button class="logBtns__login" @click="logOrRegModal = 'log'">Login</button>
-        <button class="logBtns__signUp" @click="logOrRegModal = 'reg'">Sign Up</button>
+        <button class="logBtns__login" @click="logOrRegModal = 'log'">Log in</button>
+        <button class="logBtns__signUp" @click="logOrRegModal = 'reg'">Sign up</button>
       </div>
     </div>
   </header>
