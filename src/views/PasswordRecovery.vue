@@ -4,7 +4,7 @@ import RecoveryMail from '@/components/RecoveryMail.vue'
 import RecoveryPassword from '@/components/RecoveryPassword.vue'
 import { ref } from 'vue'
 defineProps(['changeModal'])
-const step = ref(3)
+const step = ref(1)
 const changeStep = (newStep) => {
   step.value = newStep
 }
