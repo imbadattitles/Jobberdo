@@ -1,134 +1,103 @@
 <script setup>
-import login from '@/API/login'
-import googleAuth from '@/API/googleAuth'
-import { useFetch } from '@/API/useFetch.vue'
 import { useForm } from 'vee-validate'
-import { onMounted, ref } from 'vue'
 import * as yup from 'yup'
-import GoogleBtn from './GoogleBtn.vue'
-import { useRouter } from 'vue-router'
-defineProps(['changeModal'])
-const typePassword = ref('password')
-const [logCLick, isLoading, error] = useFetch(async () => {
-  try {
-    await login('web', email.value, password.value)
-    alert('готово к редиректу')
-  } catch (error) {
-    throw new Error(error.message)
-  }
-})
-const [googleFetch, isLoadingGoogle, errorGoogle] = useFetch(async () => {
-  try {
-    await googleAuth(router.currentRoute.value.query.code, router.currentRoute.value.query.error)
-    alert('готово к редиректу')
-  } catch (error) {
-    throw new Error(error.message)
-  }
-})
-
-const { errors, handleSubmit, meta, defineField } = useForm({
+import { useFetch } from '@/API/useFetch.vue'
+import emailFetch from '@/API/email'
+const { errors, handleSubmit, defineField, meta } = useForm({
   validationSchema: yup.object({
     email: yup
       .string()
       .email()
       .max(127, 'Max 127 characters')
-      .required('Please enter your email address.'),
-    password: yup
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(127, 'Max 127 characters')
-      .required('Please enter your password.')
+      .required('Please enter your email address.')
   })
+})
+const emit = defineEmits(['stepAction', 'setData'])
+const [createCLick, isLoading, error] = useFetch(async () => {
+  try {
+    const res = await emailFetch(email.value)
+    emit('setData', {
+      email_verification_key: res.data.key,
+      email: email.value
+    })
+    emit('stepAction', 2)
+  } catch (error) {
+    throw new Error('error')
+  }
+})
+
+const onSubmit = handleSubmit(() => {
+  createCLick()
 })
 
 const [email, emailAttrs] = defineField('email')
-const [password, passwordAttrs] = defineField('password')
-
-const onSubmit = handleSubmit(() => {
-  logCLick()
-})
-const router = useRouter()
-const googleQuery = () => {
-  if (router.currentRoute.value.path === '/googleAuth') {
-    googleFetch()
-  }
-}
-onMounted(() => {
-  googleQuery()
-})
+defineProps(['changeModal', 'displayNone'])
 </script>
 <template>
-  <div class="block">
-    <form :class="{ loading: isLoading | isLoadingGoogle }" @submit="onSubmit" class="form">
-      <p class="form__title">Log in</p>
-      <label class="form__item">
-        <input
-          :class="{ inputError: errors.email }"
-          maxlength="127"
-          v-model="email"
-          v-bind="emailAttrs"
-          class="form__input"
-        />
-        <p v-if="!email" class="placeholder">user00@gmail.com</p>
-        <p :class="{ activeLabel: email }" class="label">Email Address</p>
-
-        <p v-if="errors.email" class="error"><span></span>{{ errors.email }}</p>
-      </label>
-
-      <div class="gap8">
+  <div :class="{ displayNone: displayNone }" class="block">
+    <form :class="{ loading: isLoading }" @submit="onSubmit" class="form">
+      <div class="gap16">
+        <p class="form__title">Password recovery</p>
+        <p class="form__text">Fill out the form below to regain access to your account</p>
+      </div>
+      <div class="gap16">
         <label class="form__item">
-          <span
-            class="passwordChange"
-            @click="typePassword === 'text' ? (typePassword = 'password') : (typePassword = 'text')"
-            :class="{ op50: typePassword === 'text' }"
-          ></span>
-
           <input
-            :class="{ inputError: errors.password }"
-            maxlength="127"
-            v-model="password"
-            :type="typePassword"
-            v-bind="passwordAttrs"
+            type="email"
+            :class="{ inputError: errors.email }"
+            v-model="email"
+            v-bind="emailAttrs"
             class="form__input"
           />
-          <p :class="{ activeLabel: password }" class="label">Password</p>
-          <p v-if="!password" class="placeholder">********</p>
-          <p v-if="errors.password" class="error"><span></span>{{ errors.password }}</p>
+          <p :class="{ activeLabel: email }" class="label">Email Address</p>
+          <p v-if="!email" class="placeholder">user00@gmail.com</p>
+          <p v-if="errors.email" class="error"><span></span>{{ errors.email }}</p>
         </label>
-
-        <p class="form__text">or</p>
-        <GoogleBtn />
       </div>
       <div class="goAndError">
-        <button
-          :disabled="!meta.valid || isLoading"
-          :class="{ blockBtn: !meta.valid }"
-          @click="
-            (e) => {
-              e.preventDefault()
-              logCLick()
-            }
-          "
-          class="formGreen"
-        >
-          Log in
+        <button :disabled="!meta.valid" :class="{ blockBtn: !meta.valid }" class="formGreen">
+          Next
         </button>
         <p v-if="error" class="error"><span></span>{{ error }}</p>
-        <p v-if="errorGoogle" class="error"><span></span>{{ errorGoogle }}</p>
-      </div>
-
-      <div class="gap16">
-        <p @click="changeModal('rec')" class="form__text">
-          <span class="form__link">Forgot your password?</span>
-        </p>
-        <p class="form__text">
-          No account? <span @click="changeModal('reg')" class="form__link">Create account</span>
-        </p>
       </div>
     </form>
   </div>
 </template>
 <style scoped>
+.error {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 14px;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #ff6464;
+  span {
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url('/login/error.svg');
+  }
+}
+.back {
+  position: absolute;
+  top: 13px;
+  left: 0px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('/login/back.svg');
+  &:hover {
+    opacity: 0.7;
+  }
+  @media (max-width: 600px) {
+    top: 0;
+    left: 10px;
+  }
+}
 .passwordChange {
   cursor: pointer;
   position: absolute;
@@ -145,22 +114,6 @@ onMounted(() => {
   @media (max-width: 600px) {
     top: 9px;
     width: 19px;
-  }
-}
-.error {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 14px;
-  font-family: Segoe UI;
-  font-weight: 400;
-  color: #ff6464;
-  span {
-    width: 18px;
-    height: 18px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-image: url('/login/error.svg');
   }
 }
 .form__item {
@@ -266,13 +219,17 @@ onMounted(() => {
   background: white;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 48px;
-  padding: 32px 72px 52px 72px;
+  padding: 32px 43px 52px 43px;
   @media (max-width: 600px) {
     padding: 16px 32px 20px 32px;
     width: 324px;
   }
+  &.displayNone {
+    display: none;
+  }
 }
 .form {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -285,7 +242,6 @@ onMounted(() => {
   font-weight: 400;
   font-family: Alata;
   line-height: 120%;
-  margin-bottom: 20px;
   color: #4e4e4e;
   @media (max-width: 600px) {
     font-size: 24px;
@@ -293,12 +249,99 @@ onMounted(() => {
 }
 
 .gap8 {
-  margin-top: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
+}
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  cursor: pointer;
+  gap: 8px;
+  padding: 9px;
+  width: 100%;
+  font-size: 20px;
+  font-family: Segoe UI;
+  border-radius: 8px;
+  color: #4e4e4e;
+  font-weight: 600;
+  border: 2px solid #4e4e4e;
+  span {
+    width: 32px;
+    height: 32px;
+    background-size: contain;
+    background-image: url('/login/google.svg');
+    background-repeat: no-repeat;
+    @media (max-width: 600px) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    padding: 6px;
+    border: 1px solid #4e4e4e;
+  }
+}
+.iagree {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px auto 20px 20px;
+  @media (max-width: 600px) {
+    margin: 16px auto 16px auto;
+    width: 250px;
+  }
+  input {
+    display: none;
+  }
+  .fake {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid #4e4e4e;
+    border-radius: 8px;
+    transition: 0.2s;
+    position: relative;
+    @media (max-width: 600px) {
+      min-width: 20px;
+      height: 20px;
+      border: 2px solid #4e4e4e;
+    }
+    &::after {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 17px;
+      background-image: url('/login/checked.svg');
+      opacity: 0;
+      background-size: contain;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: 0px;
+      top: 1px;
+      @media (max-width: 600px) {
+        width: 14px;
+        height: 16px;
+        border: 2px solid #4e4e4e;
+      }
+    }
+  }
+  input:checked + .fake {
+    background: #5fa55c;
+  }
+  input:checked + .fake::after {
+    opacity: 1;
+  }
+  .form__text {
+    font-size: 14px;
+    font-weight: 400;
+  }
 }
 
 .goAndError {
@@ -306,24 +349,8 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
-  .error {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 14px;
-    font-family: Segoe UI;
-    font-weight: 400;
-    color: #ff6464;
-    span {
-      width: 18px;
-      height: 18px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-image: url('/login/error.svg');
-    }
-  }
 }
+
 .formGreen {
   border-radius: 20px;
   border: 2px solid #46753e;
@@ -349,16 +376,29 @@ onMounted(() => {
   }
 }
 .gap16 {
+  gap: 16px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 16px;
+  width: 408px;
+  margin-bottom: 22px;
+  @media (max-width: 600px) {
+    gap: 14px;
+    margin-bottom: 20px;
+  }
 }
 .form__text {
   font-size: 20px;
   font-family: Segoe UI;
   font-weight: 600;
   color: #4e4e4e;
+  max-width: 246px;
+  text-align: left;
+  min-width: 100%;
+  &.or {
+    margin-top: -5px;
+    margin-bottom: -5px;
+  }
   a,
   .form__link {
     cursor: pointer;
@@ -366,6 +406,10 @@ onMounted(() => {
     &:hover {
       color: #457e43;
     }
+  }
+  @media (max-width: 600px) {
+    font-size: 16px;
+    min-width: auto;
   }
 }
 </style>

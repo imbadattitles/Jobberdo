@@ -1,5 +1,6 @@
 <script setup>
 import CreateAccountModal from '@/views/CreateAccountModal.vue'
+import PasswordRecovery from '@/views/PasswordRecovery.vue'
 import LoginComponent from './LoginComponent.vue'
 defineProps(['openModal', 'googleQuery'])
 const emit = defineEmits(['modalChange'])
@@ -12,6 +13,7 @@ const close = (where) => {
     <div @click.stop>
       <CreateAccountModal :changeModal="close" v-if="openModal === 'reg'" />
       <LoginComponent :changeModal="close" v-if="openModal === 'log'" />
+      <PasswordRecovery :changeModal="close" v-if="openModal === 'rec'" />
     </div>
   </div>
 </template>
