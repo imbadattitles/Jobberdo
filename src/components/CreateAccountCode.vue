@@ -5,19 +5,20 @@ import emailFetch from '../API/email'
 import regFetch from '../API/register'
 import codeFetch from '../API/code'
 import { useFetch } from '@/API/useFetch.vue'
-const code = ref(new Array(6).fill(''))
-const handleChange = (e, index) => {
-  if (isNaN(e.target.value)) return false
-  code.value = [...code.value.map((data, indx) => (indx === index ? e.target.value : data))]
-  if (e.target.value && index !== 5) {
-    e.target.nextSibling.focus()
-  } else {
-    sendCode()
-  }
-}
-
+import OTP from './OTP.vue'
+// const code = ref(new Array(6).fill(''))
+// const handleChange = (e, index) => {
+//   if (isNaN(e.target.value)) return false
+//   code.value = [...code.value.map((data, indx) => (indx === index ? e.target.value : data))]
+//   if (e.target.value && index !== 5) {
+//     e.target.nextSibling.focus()
+//   } else {
+//     sendCode()
+//   }
+// }
+const otpValue = ref('')
 const emit = defineEmits(['stepAction', 'setData', 'setSendLeft'])
-const props = defineProps(['registerData', 'sendLeft'])
+const props = defineProps(['registerData', 'sendLeft', 'changeModal'])
 
 const [againCode] = useFetch(async () => {
   try {
@@ -27,6 +28,7 @@ const [againCode] = useFetch(async () => {
       email_verification_key: res.data.key
     })
     emit('setSendLeft', 'newCode')
+    sendCodeError.value = null
   } catch (error) {
     throw new Error('error')
   }
@@ -34,10 +36,7 @@ const [againCode] = useFetch(async () => {
 
 const [sendCode, , sendCodeError] = useFetch(async () => {
   try {
-    const res = await codeFetch(
-      props.registerData.email_verification_key,
-      code.value[0] + code.value[1] + code.value[2] + code.value[3] + code.value[4] + code.value[5]
-    )
+    const res = await codeFetch(props.registerData.email_verification_key, otpValue.value)
     emit('setData', {
       ...props.registerData,
       email_verification_key: res.data.key
@@ -46,11 +45,6 @@ const [sendCode, , sendCodeError] = useFetch(async () => {
       regAction()
     }
   } catch (error) {
-    code.value = [
-      ...code.value.map(() => {
-        return ''
-      })
-    ]
     emit('setSendLeft', 'decrement')
     console.log(error)
     throw new Error(error.message)
@@ -69,9 +63,9 @@ const [regAction] = useFetch(async () => {
     localStorage.setItem('session_uuid', res.data.session_uuid)
     localStorage.setItem('refresh_token', res.data.refresh_token)
   } catch (error) {
-    console.log(error)
     if (error.message === 'User with this email already exists.') {
-      alert('перевод на логин')
+      alert('Oops, a user with the same email already exists. Please log in.')
+      props.changeModal('log')
     } else {
       alert(error.message)
     }
@@ -93,7 +87,7 @@ const handleButtonClick = () => {
         </p>
       </div>
       <div class="gap8">
-        <div class="codeArea">
+        <!-- <div class="codeArea">
           <input
             class="codeArea__input"
             v-for="(data, index) in code"
@@ -105,9 +99,16 @@ const handleButtonClick = () => {
             :key="index"
             type="text"
           />
-        </div>
+        </div> -->
+        <OTP
+          :block="sendLeft === 0"
+          :error="sendCodeError"
+          :digit-count="6"
+          @update:otp="otpValue = $event"
+          @sendCode="sendCode"
+        ></OTP>
         <p v-if="sendCodeError" class="error">
-          <span></span>{{ sendCodeError }} {{ `attempts left: ${sendLeft}` }}
+          <span></span>{{ sendCodeError }} {{ sendLeft !== 0 ? `attempts left: ${sendLeft}` : '' }}
         </p>
       </div>
       <div class="mgb">

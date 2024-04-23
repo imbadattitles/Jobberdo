@@ -62,7 +62,13 @@ onMounted(() => {
     <form :class="{ loading: isLoading | isLoadingGoogle }" @submit="onSubmit" class="form">
       <p class="form__title">Log in</p>
       <label class="form__item">
-        <input maxlength="127" v-model="email" v-bind="emailAttrs" class="form__input" />
+        <input
+          :class="{ inputError: errors.email }"
+          maxlength="127"
+          v-model="email"
+          v-bind="emailAttrs"
+          class="form__input"
+        />
         <p v-if="!email" class="placeholder">user00@gmail.com</p>
         <p :class="{ activeLabel: email }" class="label">Email Address</p>
 
@@ -78,6 +84,7 @@ onMounted(() => {
           ></span>
 
           <input
+            :class="{ inputError: errors.password }"
             maxlength="127"
             v-model="password"
             :type="typePassword"
@@ -204,7 +211,11 @@ onMounted(() => {
     color: #4e4e4e;
     font-weight: 600;
     border: 2px solid #4e4e4e;
+    outline: none;
     padding: 12px;
+    &.inputError {
+      border: 2px solid #ff6464;
+    }
     &::placeholder {
       color: #4e4e4e;
     }
@@ -213,6 +224,9 @@ onMounted(() => {
       font-size: 14px;
       padding: 8px 12px;
       border: 1px solid #4e4e4e;
+      &.inputError {
+        border: 1px solid #ff6464;
+      }
     }
     &:focus,
     &:active {

@@ -55,6 +55,7 @@ const setSendLeft = (type) => {
     :codeSendLeft="codeSendLeft"
     @setSendLeft="setSendLeft"
     :sendLeft="codeSendLeft"
+    :changeModal="changeModal"
     @stepAction="changeStep"
     v-if="step === 3"
   />

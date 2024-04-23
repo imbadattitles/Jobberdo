@@ -69,19 +69,37 @@ defineProps(['changeModal', 'displayNone'])
       <p class="form__title">Create account</p>
       <div class="gap16">
         <label class="form__item">
-          <input type="email" v-model="email" v-bind="emailAttrs" class="form__input" />
+          <input
+            type="email"
+            :class="{ inputError: errors.email }"
+            v-model="email"
+            v-bind="emailAttrs"
+            class="form__input"
+          />
           <p :class="{ activeLabel: email }" class="label">Email Address</p>
           <p v-if="!email" class="placeholder">user00@gmail.com</p>
           <p v-if="errors.email" class="error"><span></span>{{ errors.email }}</p>
         </label>
         <label class="form__item">
-          <input maxlength="127" v-model="firstName" v-bind="firstNameAttrs" class="form__input" />
+          <input
+            :class="{ inputError: errors.firstName }"
+            maxlength="127"
+            v-model="firstName"
+            v-bind="firstNameAttrs"
+            class="form__input"
+          />
           <p :class="{ activeLabel: firstName }" class="label">First Name</p>
           <p v-if="!firstName" class="placeholder">John</p>
           <p v-if="errors.firstName" class="error"><span></span>{{ errors.firstName }}</p>
         </label>
         <label class="form__item">
-          <input maxlength="127" v-model="lastName" v-bind="lastNameAttrs" class="form__input" />
+          <input
+            :class="{ inputError: errors.lastName }"
+            maxlength="127"
+            v-model="lastName"
+            v-bind="lastNameAttrs"
+            class="form__input"
+          />
           <p :class="{ activeLabel: lastName }" class="label">Last Name</p>
           <p v-if="!lastName" class="placeholder">Smith</p>
           <p v-if="errors.lastName" class="error"><span></span>{{ errors.lastName }}</p>
@@ -93,6 +111,7 @@ defineProps(['changeModal', 'displayNone'])
             :class="{ op50: typePassword === 'text' }"
           ></span>
           <input
+            :class="{ inputError: errors.password }"
             maxlength="127"
             v-model="password"
             v-bind="passwordAttrs"
@@ -115,6 +134,7 @@ defineProps(['changeModal', 'displayNone'])
           ></span>
           <input
             maxlength="127"
+            :class="{ inputError: errors.repeatPassword }"
             v-model="repeatPassword"
             v-bind="repeatPasswordAttrs"
             :type="typeRepeatPassword"
@@ -124,7 +144,7 @@ defineProps(['changeModal', 'displayNone'])
           <p v-if="!repeatPassword" class="placeholder">********</p>
           <p v-if="errors.repeatPassword" class="error"><span></span>{{ errors.repeatPassword }}</p>
         </label>
-        <p class="form__text">or</p>
+        <p class="form__text or">or</p>
         <GoogleBtn />
       </div>
       <label class="iagree">
@@ -254,7 +274,11 @@ defineProps(['changeModal', 'displayNone'])
     color: #4e4e4e;
     font-weight: 600;
     border: 2px solid #4e4e4e;
+    outline: none;
     padding: 12px;
+    &.inputError {
+      border: 2px solid #ff6464;
+    }
     &::placeholder {
       color: #4e4e4e;
     }
@@ -263,6 +287,9 @@ defineProps(['changeModal', 'displayNone'])
       font-size: 14px;
       padding: 8px 12px;
       border: 1px solid #4e4e4e;
+      &.inputError {
+        border: 1px solid #ff6464;
+      }
     }
     &:focus,
     &:active {
@@ -462,7 +489,7 @@ defineProps(['changeModal', 'displayNone'])
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 16px;
+  gap: 13px;
   @media (max-width: 600px) {
     gap: 14px;
   }
@@ -472,6 +499,10 @@ defineProps(['changeModal', 'displayNone'])
   font-family: Segoe UI;
   font-weight: 600;
   color: #4e4e4e;
+  &.or {
+    margin-top: -5px;
+    margin-bottom: -5px;
+  }
   a,
   .form__link {
     cursor: pointer;

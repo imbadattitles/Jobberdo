@@ -35,6 +35,7 @@ onMounted(() => {
   color: #4e4e4e;
   font-weight: 600;
   border: 2px solid #4e4e4e;
+  transition: 0.2s;
   span {
     width: 32px;
     height: 32px;
@@ -45,6 +46,10 @@ onMounted(() => {
       width: 24px;
       height: 24px;
     }
+  }
+  &:hover,
+  &:focus {
+    opacity: 0.7;
   }
   @media (max-width: 600px) {
     font-size: 16px;

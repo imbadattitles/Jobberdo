@@ -106,16 +106,17 @@ const clickItem = (type) => {
   @media (max-width: 600px) {
     font-size: 16px;
     padding: 12px 40px;
+    margin-bottom: 16px;
   }
 }
 .whoYou {
   display: flex;
   align-items: center;
-  flex-direction: column;
   gap: 20px;
   margin-bottom: 22px;
   @media (max-width: 600px) {
     margin-bottom: 16px;
+    flex-direction: column;
   }
 }
 .whoYou__item {
@@ -131,12 +132,14 @@ const clickItem = (type) => {
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   transition: 0.1s;
+  text-align: center;
   &.active {
     background: #aadd91;
     box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.25) inset;
   }
   @media (max-width: 600px) {
     width: 166px;
+    border: 2px solid #4e4e4e;
   }
 }
 .whoYou__title {
