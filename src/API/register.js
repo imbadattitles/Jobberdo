@@ -8,7 +8,6 @@ export default async (key, password, first_name, last_name) => {
     last_name,
     middle_name: 'sdsddsff'
   })
-  console.log(body)
   const res = await fetch(config.backendUrl + `api/v1/security/auth/register`, {
     method: 'POST',
     headers: {

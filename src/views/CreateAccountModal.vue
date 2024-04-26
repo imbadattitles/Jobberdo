@@ -21,7 +21,6 @@ const registerData = ref({
 })
 const setRegisterData = (data) => {
   registerData.value = data
-  console.log(registerData.value)
 }
 const codeSendLeft = ref(3)
 const setSendLeft = (type) => {

@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps } from 'vue'
 defineProps(['activeType', 'changeModal'])
 const emit = defineEmits(['stepAction', 'setType'])
 const clickItem = (type) => {

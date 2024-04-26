@@ -14,7 +14,6 @@ export default async (email) => {
     if (response.status === 200) {
       return response.json()
     } else {
-      console.log(response.json())
       throw new Error(response.status)
     }
   })

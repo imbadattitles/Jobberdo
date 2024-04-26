@@ -1,7 +1,7 @@
 import config from '../../config'
 
 export default async () => {
-  const res = await fetch(config.backendUrl + `api/v1/security/users/me`, {
+  await fetch(config.backendUrl + `api/v1/security/users/me`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -16,5 +16,4 @@ export default async () => {
       }
     }
   })
-  console.log(res)
 }

@@ -24,7 +24,6 @@ const logOrRegModal = ref(false)
 const setModal = (modal) => {
   logOrRegModal.value = modal
 }
-console.log(router)
 const googleQuery = () => {
   if (router.currentRoute.value.path === '/googleAuth') {
     logOrRegModal.value = 'log'

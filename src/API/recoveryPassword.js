@@ -6,7 +6,6 @@ export default async (email_verification_key, email, new_password) => {
     email,
     new_password
   })
-  console.log(body)
   const res = await fetch(config.backendUrl + `api/v1/security/auth/password-recovery`, {
     method: 'POST',
     headers: {

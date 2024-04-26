@@ -46,7 +46,6 @@ const [sendCode, , sendCodeError] = useFetch(async () => {
     }
   } catch (error) {
     emit('setSendLeft', 'decrement')
-    console.log(error)
     throw new Error(error.message)
   }
 })

@@ -18,7 +18,6 @@ export default async (platform, email, password) => {
       return response.json()
     } else {
       const json = await response.json()
-      console.log(json)
       throw new Error(json.error.user_message)
     }
   })

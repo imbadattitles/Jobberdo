@@ -81,7 +81,6 @@ const handleKeyDown = function (event, index) {
     if (isDigitsFull()) {
       emit('update:otp', digits.join(''))
       emit('sendCode')
-      // console.log(digits.join(''))
       for (let i = 0; i < props.digitCount; i++) {
         digits[i] = null
       }
